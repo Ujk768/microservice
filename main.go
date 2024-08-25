@@ -8,16 +8,14 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/Ujk768/microservice/handlers"
+	"github.com/Ujk768/products/handlers"
 )
 
 func main() {
-	l := log.New(os.Stdout, "product-api", log.LstdFlags)
-	hh := handlers.NewHello(l)
-	gg := handlers.NewGoodBye(l)
+	l := log.New(os.Stdout, "Products API", log.LstdFlags)
+	ph := handlers.NewProducts(l)
 	sm := http.NewServeMux()
-	sm.Handle("/", hh)
-	sm.Handle("/goodbye", gg)
+	sm.Handle("/", ph)
 	s := http.Server{
 		Addr:         ":9090",
 		Handler:      sm,
@@ -33,10 +31,10 @@ func main() {
 
 	}()
 	sigChan := make(chan os.Signal)
-	signal.Notify(sigChan,os.Interrupt)
-	signal.Notify(sigChan,os.Kill)
+	signal.Notify(sigChan, os.Interrupt)
+	signal.Notify(sigChan, os.Kill)
 	sig := <-sigChan
-	l.Println("Recieved Terminate Gracefully",sig)
+	l.Println("Recieved Terminate Gracefully", sig)
 	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
 	s.Shutdown(tc)
 }
